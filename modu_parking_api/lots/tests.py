@@ -23,7 +23,10 @@ class LotsTestCase(APITestCase):
             "section_count": 1,
         }
         response = self.client.post('/api/lots', data=data)
+        # assert 구체화 필요
+        self.assertEqual(response.data.get('name'), data.get('name'))
         self.assertTrue(response.data.get('name'))
+
         self.assertEqual(response.data.get('latitude'), data["latitude"])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
