@@ -46,11 +46,10 @@ class User(AbstractUser):
     """
     email = models.EmailField(max_length=100, unique=True, verbose_name='email')
     username = models.CharField(max_length=30, blank=True, null=True)
-    phoneNum = models.IntegerField(default=None, blank=True, null=True)
-    plateNum = models.CharField(default=None, blank=True, null=True, max_length=20)
-    cardNum = models.IntegerField(default=None, blank=True, null=True)
+    phoneNum = models.CharField(max_length=20, default=None, blank=True, null=True)
+    plateNum = models.CharField(max_length=20, default=None, blank=True, null=True)
+    cardNum = models.CharField(max_length=20, default=None, blank=True, null=True)
     points = models.IntegerField(default=0)
-    bookmark = models.ManyToManyField(Lot, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
     objects = UserManager()  # Replace the default model manager with custom UserManager
@@ -60,3 +59,9 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
+
+class BookMark(models.Model):
+    """주차장 즐겨찾기"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    lot = models.ForeignKey(Lot, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)

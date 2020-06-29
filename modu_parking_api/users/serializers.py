@@ -1,6 +1,7 @@
-from .models import User
-from rest_framework import serializers
 from action_serializer import ModelActionSerializer
+from rest_framework import serializers
+
+from .models import User, BookMark
 
 
 class UserSerializer(ModelActionSerializer):
@@ -14,7 +15,7 @@ class UserSerializer(ModelActionSerializer):
         fields = ('id', 'email', 'username', 'password', 'phoneNum', 'plateNum', 'cardNum', 'points', 'created')
         action_fields = {
             'login': {'fields': ('email', 'password')},
-            'update': {'fields': ('email', 'username', 'phoneNum')},
+            'update': {'fields': ('username', 'phoneNum', 'plateNum', 'cardNum',)},
         }
 
     def create(self, validated_data):
@@ -23,3 +24,10 @@ class UserSerializer(ModelActionSerializer):
             user.set_password(validated_data['password'])
             user.save()
         return user
+
+
+class BookMarkSerializer(ModelActionSerializer):
+    class Meta:
+        model = BookMark
+        fields = ('id', 'lot', 'user')
+        read_only_fields = ('id', 'user')
