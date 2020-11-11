@@ -19,6 +19,14 @@ class UserSerializer(ModelActionSerializer):
         }
 
     def create(self, validated_data):
+        return User.objects.create_user(validated_data['email'], validated_data['password'])
+
+        user = User(**validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+
+        return user
+
         user = super(UserSerializer, self).create(validated_data)
         # 이미 validation 과정이 마무리 되었으므로 password 필드는 반드시 있어야 함
         if 'password' in validated_data:

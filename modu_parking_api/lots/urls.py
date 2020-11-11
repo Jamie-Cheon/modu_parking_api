@@ -1,5 +1,4 @@
 from rest_framework import routers
-
 from lots import views
 
 router = routers.SimpleRouter(trailing_slash=False)

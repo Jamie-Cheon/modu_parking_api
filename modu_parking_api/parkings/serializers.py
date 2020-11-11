@@ -4,22 +4,22 @@ from parkings.models import Parking
 
 
 class ParkingSerializer(serializers.ModelSerializer):
-    """주차 생성, 삭제, 디테일 시리얼라이저
+    """Parking create, delete, detail Serializer
 
-    생성:
+    Create:
     request = lot, parking_time
     response = id, lot(foreign), start_time, parking_time
 
-    디테일 - 사용자의 주차 내역만 조회가능:
+    Detail - only the user's parking history can be viewed:
     response = id, lot(foreign), start_time, parking_time
 
-    리스트 - 사용자의 주차내역 목록:
+    List - the user's parking history:
     response = id, lot(foreign), parking_time
 
-    삭제:
+    Delete:
     response = 204
 
-    수정:
+    Update:
     request = additional_time
     response = id, lot(foreign), start_time, parking_time
     """
