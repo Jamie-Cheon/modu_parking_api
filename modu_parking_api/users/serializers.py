@@ -1,8 +1,7 @@
 from action_serializer import ModelActionSerializer
 from rest_framework import serializers
 
-from .models import User, BookMark
-
+from .models import User
 
 class UserSerializer(ModelActionSerializer):
     email = serializers.EmailField()
@@ -35,8 +34,8 @@ class UserSerializer(ModelActionSerializer):
         return user
 
 
-class BookMarkSerializer(ModelActionSerializer):
-    class Meta:
-        model = BookMark
-        fields = ('id', 'lot', 'user')
-        read_only_fields = ('id', 'user')
+# class BookMarkSerializer(ModelActionSerializer):
+#     class Meta:
+#         model = BookMark
+#         fields = ('id', 'lot', 'user')
+#         read_only_fields = ('id', 'user')

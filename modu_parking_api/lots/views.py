@@ -16,17 +16,17 @@ class LotsViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         data = self.request.GET     # User's location
         if self.action == 'map':
-            lat = float(data['lat'])
-            lon = float(data['lon'])
+            lat = float(data['latitude'])
+            lon = float(data['longitude'])
 
             min_lat = lat - 0.009
             max_lat = lat + 0.009
             min_lon = lon - 0.015
             max_lon = lon + 0.015
 
-            # filter by setting the minimum and maximum latitude and longtitude by 1km
+            # filter by setting the minimum and maximum latitude and longitude by 1km
             queryset = self.queryset.filter(latitude__gte=min_lat, latitude__lte=max_lat,
-                                            longtitude_gte=min_lon, longtitude__lte=max_lon)
+                                            longitude_gte=min_lon, longitude__lte=max_lon)
             return queryset
         return super().get_queryset()
 

@@ -28,18 +28,18 @@ class ParkingViewSet(mixins.CreateModelMixin,
     def create(self, request, *args, **kwargs):
         """
         POST /parkings/
-        주차 결제를 함으로서 사용자의 포인트 차감
+        Deduct points when a user is making parking payment
 
-        총비용 = 주차시간 중 처음 1시간만 기본요금, 나머지 시간은 추가요금으로 계산
+        Total fee = Basic charge for the first hour of parking time, and additional charge for the remaining hours
         """
         lot = Lot.objects.get(id=request.data['lot'])
+        # lot = get_object_or_404(Lot, pk=request.data['lot'])
         parking_time = float(request.data['parking_time'])
-        additional_rate = ((parking_time - 1) * 2) * lot.additional_rate  # 추가비용
-        total_fee = (lot.basic_rate + additional_rate)  # 총비용
+        additional_rate = ((parking_time - 1) * 2) * lot.additional_rate
+        total_fee = (lot.basic_rate + additional_rate)
 
-        # 포인트 부족시 거부
         if request.user.points < total_fee:
-            return Response({'refuse': '보유한 포인트가 부족합니다'})
+            return Response({'refuse': 'Not enough points'})
 
         # 포인트 차감/충전 동시에 진행 하면 race condition 발생 가능
         # 해결: lock/F function/Update
@@ -55,38 +55,33 @@ class ParkingViewSet(mixins.CreateModelMixin,
     def list(self, request, *args, **kwargs):
         """
         GET /parkings/
-        : 유저의 주차 내역 목록(총비용, 주차장 정보)
-        : 과거 주차내역 list으로 시간, 가격, 주차장이름 나열
+        : user's parking history (parking time, total fee, lot details..)
         """
         queryset = self.queryset.filter(user=request.user)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     # queryset도 dynamic 하게 override 가능
-    def get_queryset(self):
-        qs = super().get_queryset()
-
-        if self.action == 'list':
-            qs = qs.filter(user=self.request.user)
-            return qs
-
-        return qs
+    # def get_queryset(self):
+    #     qs = super().get_queryset()
+    #     if self.action == 'list':
+    #         qs = qs.filter(user=self.request.user)
+    #         return qs
+    #     return qs
 
     def update(self, request, *args, **kwargs):
         """
         PUT /parkings/id/
-        사용자가 추가결제하여 주차시간 연장
+        : Deduct additional fee when a user extend parking time
         """
         instance = self.get_object()
         additional_time = float(request.data['additional_time'])
         lot = Lot.objects.get(id=instance.lot_id)
         additional_rate = (additional_time * 2) * lot.additional_rate
 
-        # 포인트 부족시 거부
         if request.user.points < additional_rate:
-            return Response({'refuse': '보유한 포인트가 부족합니다'})
+            return Response({'refuse': 'Not enough points'})
 
-        # 주차시간 연장, 사용자 포인트 차감
         instance.parking_time += additional_time
         request.user.points -= additional_rate
 

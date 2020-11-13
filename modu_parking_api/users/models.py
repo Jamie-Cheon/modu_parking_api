@@ -75,25 +75,25 @@ class User(AbstractUser):
         return user
 
 
-class Profile(models.Model):
-    user = models.OneToOneField('users.User', on_delete=models.CASCADE)
-    phone_num = models.CharField(max_length=20, default='', blank=True)
-    plate_num = models.CharField(max_length=20, default=None, blank=True)
-    card_num = models.CharField(max_length=20, default=None, blank=True)
-    points = models.IntegerField(null=True, blank=True)
+# class Profile(models.Model):
+#     user = models.OneToOneField('users.User', on_delete=models.CASCADE)
+#     phone_num = models.CharField(max_length=20, default='', blank=True)
+#     plate_num = models.CharField(max_length=20, default=None, blank=True)
+#     card_num = models.CharField(max_length=20, default=None, blank=True)
+#     points = models.IntegerField(null=True, blank=True)
+#
+#     @receiver(post_save, sender=User)
+#     def create_user_profile(sender, instance, created, **kwargs):
+#         if created:
+#             Profile.objects.create(user=instance)
+#
+#     @receiver(post_save, sender=User)
+#     def save_user_profile(sender, instance, **kwargs):
+#         instance.profile.save()
 
-    @receiver(post_save, sender=User)
-    def create_user_profile(sender, instance, created, **kwargs):
-        if created:
-            Profile.objects.create(user=instance)
 
-    @receiver(post_save, sender=User)
-    def save_user_profile(sender, instance, **kwargs):
-        instance.profile.save()
-
-
-class BookMark(models.Model):
-    """주차장 즐겨찾기"""
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
-    lot = models.ForeignKey(Lot, on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True)
+# class BookMark(models.Model):
+#     """주차장 즐겨찾기"""
+#     user = models.ForeignKey('users.User', on_delete=models.CASCADE)
+#     lot = models.ForeignKey(Lot, on_delete=models.CASCADE)
+#     created = models.DateTimeField(auto_now_add=True)
