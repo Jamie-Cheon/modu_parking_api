@@ -1,5 +1,4 @@
-from rest_framework import mixins
-from rest_framework.authentication import TokenAuthentication
+from rest_framework import mixins, status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -30,7 +29,6 @@ class ParkingViewSet(mixins.CreateModelMixin,
         """
         POST /parkings/
         주차 결제를 함으로서 사용자의 포인트 차감
-
         총비용 = 주차시간 중 처음 1시간만 기본요금, 나머지 시간은 추가요금으로 계산
         """
         lot = Lot.objects.get(id=request.data['lot'])
@@ -40,13 +38,7 @@ class ParkingViewSet(mixins.CreateModelMixin,
 
         # 포인트 부족시 거부
         if request.user.points < total_fee:
-            return Response({'refuse': '보유한 포인트가 부족합니다'})
-
-        # 포인트 차감/충전 동시에 진행 하면 race condition 발생 가능
-        # 해결: lock/F function/Update
-        # https://docs.djangoproject.com/en/3.0/ref/models/expressions/#f-expressions
-        # https: // docs.djangoproject.com / en / 3.0 / ref / models / expressions /  # avoiding-race-conditions-using-f
-        # User.objects.filter(id=request.user.id).update(points=F('points') - total_fee)
+            return Response({'refuse': '보유한 포인트가 부족합니다'}, status=status.HTTP_400_BAD_REQUEST)
 
         # 사용자 포인트 차감
         request.user.points -= total_fee
@@ -56,22 +48,11 @@ class ParkingViewSet(mixins.CreateModelMixin,
     def list(self, request, *args, **kwargs):
         """
         GET /parkings/
-        : 유저의 주차 내역 목록(총비용, 주차장 정보)
-        : 과거 주차내역 list으로 시간, 가격, 주차장이름 나열
+        유저의 주차 내역 목록(시간, 가격, 주차장이름, 주차장 id)
         """
         queryset = self.queryset.filter(user=request.user)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-
-    # queryset도 dynamic 하게 override 가능
-    def get_queryset(self):
-        qs = super().get_queryset()
-
-        if self.action == 'list':
-            qs = qs.filter(user=self.request.user)
-            return qs
-
-        return qs
 
     def update(self, request, *args, **kwargs):
         """
@@ -85,7 +66,7 @@ class ParkingViewSet(mixins.CreateModelMixin,
 
         # 포인트 부족시 거부
         if request.user.points < additional_rate:
-            return Response({'refuse': '보유한 포인트가 부족합니다'})
+            return Response({'refuse': '보유한 포인트가 부족합니다'}, status=status.HTTP_400_BAD_REQUEST)
 
         # 주차시간 연장, 사용자 포인트 차감
         instance.parking_time += additional_time
