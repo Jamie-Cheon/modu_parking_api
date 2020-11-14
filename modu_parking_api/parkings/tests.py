@@ -27,7 +27,6 @@ class ParkingsListTestCase(APITestCase):
             "lot": self.lots[0].id,
             "parking_time": 3,
         }
-
         response = self.client.post(url, data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -61,3 +60,4 @@ class ParkingsListTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.parking.lot_id, response.data['lot'])
         self.assertEqual(self.parking.user_id, response.data['user'])
+

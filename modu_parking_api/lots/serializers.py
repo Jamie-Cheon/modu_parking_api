@@ -3,7 +3,7 @@ from lots.models import Lot
 
 
 class LotsSerializer(serializers.ModelSerializer):
-    """create, update, detail"""
+    """ Create, Update, Detail view serializer """
     class Meta:
         model = Lot
         fields = ['name', 'address', 'latitude', 'longitude', 'basic_rate', 'additional_rate',
@@ -11,7 +11,7 @@ class LotsSerializer(serializers.ModelSerializer):
 
 
 class MapSerializer(serializers.ModelSerializer):
-    """list : filtering by zoom-lv and coordinates"""
+    """ List view : Filtering by zoom level and coordinates on the map"""
     class Meta:
         model = Lot
         fields = ['id', 'latitude', 'longitude', 'basic_rate', ]
@@ -26,4 +26,3 @@ DELETE /lots/id
 
 GET /lots/map(action) 
 """
-

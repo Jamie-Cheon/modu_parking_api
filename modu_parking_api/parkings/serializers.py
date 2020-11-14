@@ -4,13 +4,15 @@ from parkings.models import Parking
 
 
 class ParkingSerializer(serializers.ModelSerializer):
-    """create, delete, detail
-    create:
+    """Parking create, delete, detail Serializer
+    Create:
     request = lot, parking_time
     response = id, lot(foreign), start_time, parking_time
-    detail(login required):
+
+    Detail - only the user's parking history can be viewed:
     response = id, lot(foreign), start_time, parking_time
-    delete:
+
+    Delete:
     response = 204
     """
 
@@ -28,7 +30,7 @@ class ParkingSerializer(serializers.ModelSerializer):
 
 class ParkingUpdateSerializer(serializers.ModelSerializer):
     """
-    update:
+    Update:
     request = additional_time
     response = id, lot(foreign), start_time, parking_time
     """
@@ -47,7 +49,7 @@ class ParkingUpdateSerializer(serializers.ModelSerializer):
 
 class ParkingListSerializer(serializers.ModelSerializer):
     """
-    list(login required):
+    List - the user's parking history:
     response = id, lot(foreign), parking_time
     """
     lot = LotsSerializer()

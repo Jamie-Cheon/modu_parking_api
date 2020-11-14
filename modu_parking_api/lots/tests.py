@@ -1,4 +1,3 @@
-import copy
 from random import *
 from haversine import haversine
 from model_bakery import baker

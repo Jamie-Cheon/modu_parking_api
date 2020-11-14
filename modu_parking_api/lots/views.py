@@ -33,6 +33,6 @@ class LotsViewSet(viewsets.ModelViewSet):
     @action(detail=False)
     def map(self, request, *args, **kwargs):
         """
-        lot lists on map in a range based on user's location
+        사용자의 위치를 기준으로 일정 범위의 주차장 목록 반환
         """
         return super().list(request, *args, **kwargs)
